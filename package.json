@@ -4,6 +4,7 @@
   "private": true,
   "description": "Adreno - Messaging App",
   "dependencies": {
+    "@aspnet/signalr": "^1.0.0-preview1-update1",
     "bootstrap": "^4.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
-import './App.css';
+import './styles/App.css';
+import Login from './Login';
+import Header from './Header';
 
 class App extends Component {
   constructor(props) {
@@ -14,7 +16,9 @@ class App extends Component {
   render() {
     return (
       <div className="title">
-        <h1>{this.state.title}</h1>
+        <Header />
+        {this.state.title}
+        <Login />
       </div>
     );
   }

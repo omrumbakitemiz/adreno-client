@@ -25,11 +25,11 @@ class LoginForm extends Component {
       this.props.setUser(user);
       this.setError('');
     }
-  }
+  };
 
   setError = (error) => {
     this.setState({ error });
-  }
+  };
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -38,11 +38,11 @@ class LoginForm extends Component {
     const { nickname } = this.state;
 
     socket.emit(VERIFY_USER, nickname, this.setUser)
-  }
+  };
 
   handleChange = (e) => {
     this.setState({ nickname: e.target.value });
-  }
+  };
 
   render() {
     const { nickname, error } = this.state;

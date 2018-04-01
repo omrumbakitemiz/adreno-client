@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import Button from 'material-ui/Button';
+
 import io from 'socket.io-client';
 
 import { USER_CONNECTED, LOGOUT } from '../Events';
@@ -7,6 +9,7 @@ import { USER_CONNECTED, LOGOUT } from '../Events';
 import LoginForm from './LoginForm';
 
 import './styles/Login.css';
+import ChatContainer from './ChatContainer';
 
 const socketUrl = 'http://localhost:2112';
 
@@ -20,13 +23,22 @@ class Login extends Component {
     };
   }
 
+  componentWillMount() {
+    this.initSocket();
+  }
+
   initSocket = () => {
     const socket = io(socketUrl);
+
     socket.on('connect', () => {
       console.log('Connected');
-    })
+    });
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+    });
+
     this.setState({ socket })
-  }
+  };
 
   setUser = (user) => {
     const { socket } = this.state;
@@ -34,22 +46,24 @@ class Login extends Component {
     socket.emit(USER_CONNECTED, user);
 
     this.setState({ user });
-  }
+  };
 
   logout = () => {
-    const { socket } = this.state;
-    socket.emit(LOGOUT);
+    const { socket, user } = this.state;
+    socket.emit(LOGOUT, user.name);
+    // socket.disconnect();
     this.setState({ user: null });
-  }
-
-  componentWillMount() {
-    this.initSocket();
-  }
+  };
 
   render() {
-    return (
+    const { socket, user } = this.state;
+     return (
       <div>
-        <LoginForm socket={this.state.socket} setUser={this.setUser} />
+        {
+          !user ? <LoginForm socket={socket} setUser={this.setUser} /> : <ChatContainer/>
+        }
+
+        <Button variant="raised" color="secondary" onClick={this.logout}>Logout</Button>
       </div>
     );
   }

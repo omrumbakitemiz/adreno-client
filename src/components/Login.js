@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import Button from 'material-ui/Button';
-import { List, ListItem } from 'material-ui/List';
+import List, { ListItem, ListItemText } from 'material-ui/List';
 
 import io from 'socket.io-client';
 
@@ -77,13 +77,18 @@ class Login extends Component {
 
         <Button variant="raised" color="secondary" onClick={this.logout}>Logout</Button>
 
-        {/* <List>
-          {this.state.connectedUsers.map((user, index) => {
-            return(
-              <ListItem primaryText={user} />
-            )
-          })}
-        </List> */}
+        <div>
+          <h3>Connected Users</h3>
+          <List>
+            {this.state.connectedUsers.map((user, index) => {
+              return(
+                <ListItem key={index}>
+                  <ListItemText primary={user.name} secondary={user.id} />
+                </ListItem>
+              )
+            })}
+          </List>
+        </div>
       </div>
     );
   }

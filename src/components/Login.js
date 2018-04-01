@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 
 import Button from 'material-ui/Button';
+import { List, ListItem } from 'material-ui/List';
 
 import io from 'socket.io-client';
 
-import { USER_CONNECTED, LOGOUT } from '../Events';
+import { USER_CONNECTED, LOGOUT, USERS_CHANGED } from '../Events';
 
 import LoginForm from './LoginForm';
 
@@ -19,7 +20,8 @@ class Login extends Component {
 
     this.state = {
       socket: null,
-      user: null
+      user: null,
+      connectedUsers: []
     };
   }
 
@@ -30,6 +32,8 @@ class Login extends Component {
   initSocket = () => {
     const socket = io(socketUrl);
 
+    this.setState({ socket });
+
     socket.on('connect', () => {
       console.log('Connected');
     });
@@ -37,8 +41,16 @@ class Login extends Component {
       console.log('user disconnected');
     });
 
-    this.setState({ socket })
+    socket.on(USERS_CHANGED, this.handleUsersChange);
   };
+
+  handleUsersChange = (connectedUsers) => {
+    console.log('users: ', connectedUsers);
+
+    this.setState({
+      connectedUsers: connectedUsers
+    });
+  }
 
   setUser = (user) => {
     const { socket } = this.state;
@@ -51,7 +63,7 @@ class Login extends Component {
   logout = () => {
     const { socket, user } = this.state;
     socket.emit(LOGOUT, user.name);
-    // socket.disconnect();
+
     this.setState({ user: null });
   };
 
@@ -64,6 +76,14 @@ class Login extends Component {
         }
 
         <Button variant="raised" color="secondary" onClick={this.logout}>Logout</Button>
+
+        {/* <List>
+          {this.state.connectedUsers.map((user, index) => {
+            return(
+              <ListItem primaryText={user} />
+            )
+          })}
+        </List> */}
       </div>
     );
   }

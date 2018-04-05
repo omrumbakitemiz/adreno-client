@@ -5,7 +5,8 @@ import List, { ListItem, ListItemText } from 'material-ui/List';
 
 import io from 'socket.io-client';
 
-import { USER_CONNECTED, LOGOUT, USERS_CHANGED } from '../Events';
+import { USER_CONNECTED, LOGOUT, USERS_CHANGED, PRIVATE_CHAT } from '../Events';
+import Message from '../Models/Message';
 
 import LoginForm from './LoginForm';
 
@@ -21,7 +22,8 @@ class Login extends Component {
     this.state = {
       socket: null,
       user: null,
-      connectedUsers: []
+      connectedUsers: [],
+      message: []
     };
   }
 
@@ -42,6 +44,17 @@ class Login extends Component {
     });
 
     socket.on(USERS_CHANGED, this.handleUsersChange);
+
+    socket.on('privateMessage', (sender, receiver, text, date) => {
+      const newMessage = new Message(sender, receiver, text, date);
+
+      this.setState((prevState) => ({
+        message: [...prevState.message, newMessage]
+      }));
+
+      // Alternative approach
+      // this.setState({arrayvar:[...this.state.arrayvar, newelement]});
+    });
   };
 
   handleUsersChange = (connectedUsers) => {
@@ -68,27 +81,30 @@ class Login extends Component {
   };
 
   render() {
-    const { socket, user } = this.state;
+    const { socket, user, connectedUsers } = this.state;
      return (
       <div>
+        {/* TODO: user'ın başına ünlem gelecek */}
         {
-          !user ? <LoginForm socket={socket} setUser={this.setUser} /> : <ChatContainer/>
+          !user ? <LoginForm socket={socket} setUser={this.setUser} /> :
+          <ChatContainer user={this.state.user} connectedUsers={connectedUsers} socket={socket}/>
         }
-
         <Button variant="raised" color="secondary" onClick={this.logout}>Logout</Button>
 
-        <div>
-          <h3>Connected Users</h3>
-          <List>
-            {this.state.connectedUsers.map((user, index) => {
-              return(
-                <ListItem key={index}>
-                  <ListItemText primary={user.name} secondary={user.id} />
-                </ListItem>
-              )
-            })}
-          </List>
-        </div>
+        { user ?
+          <div>
+            <h3>Connected Users</h3>
+            <List>
+              {this.state.connectedUsers.map((user, index) => {
+                return(
+                  <ListItem key={index}>
+                    <ListItemText primary={user.name} secondary={user.id} />
+                  </ListItem>
+                )
+              })}
+            </List>
+          </div> : <h4>You must login to see connected users :)</h4>
+        }
       </div>
     );
   }

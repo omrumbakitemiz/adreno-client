@@ -5,7 +5,7 @@ import List, { ListItem, ListItemText } from 'material-ui/List';
 
 import io from 'socket.io-client';
 
-import { USER_CONNECTED, LOGOUT, USERS_CHANGED, PRIVATE_CHAT } from '../Events';
+import { USER_CONNECTED, LOGOUT, USERS_CHANGED, COMMUNITY_CHAT } from '../Events';
 import Message from '../Models/Message';
 
 import LoginForm from './LoginForm';
@@ -13,7 +13,7 @@ import LoginForm from './LoginForm';
 import './styles/Login.css';
 import ChatContainer from './ChatContainer';
 
-const socketUrl = 'http://localhost:2112';
+const socketUrl = 'http://192.168.0.20:2112';
 
 class Login extends Component {
   constructor(props) {
@@ -23,7 +23,8 @@ class Login extends Component {
       socket: null,
       user: null,
       connectedUsers: [],
-      message: []
+      privateMessages: [],
+      communityMessages: []
     };
   }
 
@@ -39,6 +40,7 @@ class Login extends Component {
     socket.on('connect', () => {
       console.log('Connected');
     });
+
     socket.on('disconnect', () => {
       console.log('user disconnected');
     });
@@ -48,24 +50,29 @@ class Login extends Component {
     socket.on('privateMessage', (sender, receiver, text, date) => {
       const newMessage = new Message(sender, receiver, text, date);
 
-      this.setState((prevState) => ({
-        message: [...prevState.message, newMessage]
+      this.setState(prevState => ({
+        privateMessages: [...prevState.privateMessages, newMessage]
       }));
-
       // Alternative approach
-      // this.setState({arrayvar:[...this.state.arrayvar, newelement]});
+      // this.setState({privateMessages:[...this.state.privateMessages, newMessage]});
+    });
+
+    socket.on(COMMUNITY_CHAT, (sender, text, date) => {
+      const newCommunityMessage = new Message(sender, 'all', text, date);
+
+      this.setState(prevState => ({
+        communityMessages: [...prevState.communityMessages, newCommunityMessage]
+      }));
     });
   };
 
-  handleUsersChange = (connectedUsers) => {
-    console.log('users: ', connectedUsers);
-
+  handleUsersChange = connectedUsers => {
     this.setState({
       connectedUsers: connectedUsers
     });
-  }
+  };
 
-  setUser = (user) => {
+  setUser = user => {
     const { socket } = this.state;
 
     socket.emit(USER_CONNECTED, user);
@@ -81,30 +88,40 @@ class Login extends Component {
   };
 
   render() {
-    const { socket, user, connectedUsers } = this.state;
-     return (
+    const { socket, user, connectedUsers, privateMessages, communityMessages } = this.state;
+    return (
       <div>
-        {/* TODO: user'ın başına ünlem gelecek */}
-        {
-          !user ? <LoginForm socket={socket} setUser={this.setUser} /> :
-          <ChatContainer user={this.state.user} connectedUsers={connectedUsers} socket={socket}/>
-        }
-        <Button variant="raised" color="secondary" onClick={this.logout}>Logout</Button>
+        {!user ? (
+          <LoginForm socket={socket} setUser={this.setUser} />
+        ) : (
+          <ChatContainer
+            user={user}
+            connectedUsers={connectedUsers}
+            messages={privateMessages}
+            communityMessages={communityMessages}
+            socket={socket}
+          />
+        )}
+        <Button variant="raised" color="secondary" onClick={this.logout}>
+          Logout
+        </Button>
 
-        { user ?
+        {user ? (
           <div>
             <h3>Connected Users</h3>
             <List>
-              {this.state.connectedUsers.map((user, index) => {
-                return(
+              {connectedUsers.map((user, index) => {
+                return (
                   <ListItem key={index}>
                     <ListItemText primary={user.name} secondary={user.id} />
                   </ListItem>
-                )
+                );
               })}
             </List>
-          </div> : <h4>You must login to see connected users :)</h4>
-        }
+          </div>
+        ) : (
+          <h4>You must login to see connected users :)</h4>
+        )}
       </div>
     );
   }

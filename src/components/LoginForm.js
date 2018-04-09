@@ -18,29 +18,45 @@ class LoginForm extends Component {
 
   setUser = ({ user, isUser }) => {
     console.log(user, isUser);
-    if(isUser) {
+    if (isUser) {
       this.setError('User name taken');
-    }
-    else {
+    } else {
       this.props.setUser(user);
       this.setError('');
     }
   };
 
-  setError = (error) => {
+  setError = error => {
     this.setState({ error });
   };
 
-  handleSubmit = (e) => {
+  handleSubmit = e => {
     e.preventDefault();
 
     const { socket } = this.props;
     const { nickname } = this.state;
+    let ipAddress = null;
 
-    socket.emit(VERIFY_USER, nickname, this.setUser)
+    // fetch('https://api.ipify.org?format=json')
+    //   .then(response => response.json())
+    //   .then(ip => {
+    //     if (ip != null) {
+    //       ipAddress = ip;
+    //     }
+    //   })
+
+    const getIp = async () => {
+      const response = await fetch('https://api.ipify.org?format=json');
+      const ip = await response.json();
+      ipAddress = ip.ip; // api'den dönen cevap response = { ip: 1234421 } şeklinde olduğu için ip.ip işlemi uygulandı.
+
+      socket.emit(VERIFY_USER, nickname, ipAddress, this.setUser);
+    };
+
+    getIp();
   };
 
-  handleChange = (e) => {
+  handleChange = e => {
     this.setState({ nickname: e.target.value });
   };
 
@@ -55,13 +71,16 @@ class LoginForm extends Component {
           </label>
 
           <input
-            ref={(input) => { this.textInput = input; }}
+            ref={input => {
+              this.textInput = input;
+            }}
             type="text"
             id="nickname"
             value={nickname}
             onChange={this.handleChange}
-            placeholder="Username :)" />
-          <div className="error">{ error ? error : null }</div>
+            placeholder="Username :)"
+          />
+          <div className="error">{error ? error : null}</div>
           <Button color="primary">Login</Button>
         </form>
       </div>

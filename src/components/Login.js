@@ -114,6 +114,7 @@ class Login extends Component {
                 return (
                   <ListItem key={index}>
                     <ListItemText primary={user.name} secondary={user.id} />
+                    <ListItemText primary={user.ipAddress} />
                   </ListItem>
                 );
               })}

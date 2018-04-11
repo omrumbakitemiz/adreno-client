@@ -10,10 +10,9 @@ import Message from '../Models/Message';
 
 import LoginForm from './LoginForm';
 
-import './styles/Login.css';
 import ChatContainer from './ChatContainer';
 
-const socketUrl = 'http://192.168.0.20:2112';
+const socketUrl = 'http://127.0.0.1:2112';
 
 class Login extends Component {
   constructor(props) {
@@ -21,7 +20,7 @@ class Login extends Component {
 
     this.state = {
       socket: null,
-      user: null,
+      user: 'user1', // TODO: user nesnesi css amaçlı atanmıştır, tekrardan null yapılması gerekli
       connectedUsers: [],
       privateMessages: [],
       communityMessages: []
@@ -91,7 +90,8 @@ class Login extends Component {
     const { socket, user, connectedUsers, privateMessages, communityMessages } = this.state;
     return (
       <div>
-        {!user ? (
+        <ChatContainer/>
+        {/*{!user ? (
           <LoginForm socket={socket} setUser={this.setUser} />
         ) : (
           <ChatContainer
@@ -101,8 +101,8 @@ class Login extends Component {
             communityMessages={communityMessages}
             socket={socket}
           />
-        )}
-        <Button variant="raised" color="secondary" onClick={this.logout}>
+        )}*/}
+        {/*<Button variant="raised" color="secondary" onClick={this.logout}>
           Logout
         </Button>
 
@@ -122,7 +122,7 @@ class Login extends Component {
           </div>
         ) : (
           <h4>You must login to see connected users :)</h4>
-        )}
+        )}*/}
       </div>
     );
   }

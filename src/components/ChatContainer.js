@@ -4,8 +4,47 @@ import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
+import Grid from "material-ui/Grid";
+import { withStyles } from "material-ui/styles";
 
 import { PRIVATE_CHAT, COMMUNITY_CHAT } from '../Events';
+
+const styles = theme => ({
+  wrapper: {
+    backgroundColor: "#fff",
+    height: 700,
+    padding: theme.spacing.unit / 2,
+    display: 'grid',
+    gridGap: "5px",
+    gridTemplateColumns: "repeat(12, 1fr)",
+    gridTemplateRows: "repeat(10, 1fr)",
+  },
+  userInfo: {
+    backgroundColor: 'red',
+    gridColumn: "1 / 3",
+    gridRow: "1 / 2"
+  },
+  chatInfo: {
+    backgroundColor: 'yellow',
+    gridColumn: "3 / -1",
+    gridRow: "1 / 2"
+  },
+  friends: {
+    backgroundColor: 'blue',
+    gridColumn: "1 / 3",
+    gridRow: "2 / -1"
+  },
+  chat: {
+    backgroundColor: 'green',
+    gridColumn: "3 / -1",
+    gridRow: "2 / -2"
+  },
+  send: {
+    backgroundColor: 'aqua',
+    gridColumn: "3 / -1",
+    gridRow: "-2 / -1"
+  }
+});
 
 class ChatContainer extends Component {
   constructor(props) {
@@ -62,85 +101,21 @@ class ChatContainer extends Component {
 
     socket.emit(COMMUNITY_CHAT, sender, text, date);
   };
+
   render() {
-    const style = {
-      border: '1px solid red',
-      display: 'grid',
-      gridTemplateColumns: '175px 175px',
-      width: '400px',
-      height: '400px',
-      margin: 30
-    };
-
-    const textFieldStyle = {
-      marginTop: 10,
-      marginLeft: 20,
-      width: 150,
-      height: '100%',
-      color: 'red'
-    };
-
     const { messages } = this.props;
+    const { classes } = this.props;
 
     return (
-      <div style={style}>
-        <TextField
-          id="receiver"
-          label="Message Receiver"
-          placeholder="Enter username"
-          style={textFieldStyle}
-          onChange={this.onReceiverChange}
-        />
-
-        <TextField
-          id="message"
-          label="Message"
-          placeholder="Enter message"
-          style={textFieldStyle}
-          onChange={this.onMessageChange}
-        />
-
-        <div style={{ width: '100', height: '20' }}>
-          <Button variant="raised" color="primary" onClick={this.sendMessage}>
-            Send Message
-          </Button>
-        </div>
-
-        <div>
-          <Paper
-            style={{
-              backgroundColor: '#1abc9c',
-              paddingTop: 16,
-              paddingBottom: 16,
-              paddingLeft: 5,
-              paddingRight: 5
-            }}
-            elevation={10}
-          >
-            <Typography variant="title">Messages</Typography>
-            <Typography component="div">
-              {messages.map((message, index) => {
-                return (
-                  <div key={index}>
-                    <div>Gönderen: {message.sender.name}</div>
-                    <div>Alıcı: {message.receiver}</div>
-                    <div>Mesaj: {message.text}</div>
-                    <div>Tarih: {message.date}</div>
-                  </div>
-                );
-              })}
-            </Typography>
-          </Paper>
-        </div>
-
-        <div>
-          <Button variant="raised" color="primary" onClick={this.sendCommunityMessage}>
-            Send Community Message
-          </Button>
-        </div>
-      </div>
+      <Grid container className={classes.wrapper} spacing={12}>
+        <Grid item className={classes.userInfo}>1</Grid>
+        <Grid item className={classes.chatInfo}>2</Grid>
+        <Grid item className={classes.friends}>3</Grid>
+        <Grid item className={classes.chat}>4</Grid>
+        <Grid item className={classes.send}>5</Grid>
+      </Grid>
     );
   }
 }
 
-export default ChatContainer;
+export default withStyles(styles)(ChatContainer);

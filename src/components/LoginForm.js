@@ -12,7 +12,7 @@ import { VERIFY_USER } from '../Events';
 
 const styles = theme => ({
   wrapper: {
-    backgroundImage: "radial-gradient(50% 361%, invalid gradient)"
+    background: "radial-gradient(circle, rgba(211,211,211,1) 0%, rgba(0,0,0,1) 500%)"
   },
   dropzoneContainer: {
     display: "flex",
@@ -156,19 +156,6 @@ class LoginForm extends Component {
 
     return (
       <div className={classes.wrapper}>
-        {/*<div className="login">
-          <form onSubmit={this.handleSubmit} className="login-form">
-            <label htmlFor="nickname">
-              <h2>Nickname ?</h2>
-            </label>
-
-            <input
-              ref={input => { this.textInput = input; }} type="text" id="nickname"
-              value={nickname} onChange={this.handleChange} placeholder="Username :)" />
-            <div className="error">{error ? error : null}</div>
-            <Button color="primary">Login</Button>
-          </form>
-        </div>*/}
         <form onSubmit={this.handleSubmit}>
           <Grid container spacing={24}>
             <Grid className={classes.dropzoneContainer} item xs={12}>

@@ -20,7 +20,7 @@ class Login extends Component {
 
     this.state = {
       socket: null,
-      user: 'user1', // TODO: user nesnesi css amaçlı atanmıştır, tekrardan null yapılması gerekli
+      user: null, // TODO: user nesnesi css amaçlı atanmıştır, tekrardan null yapılması gerekli
       connectedUsers: [],
       privateMessages: [],
       communityMessages: []
@@ -48,6 +48,7 @@ class Login extends Component {
 
     socket.on('privateMessage', (sender, receiver, text, date) => {
       const newMessage = new Message(sender, receiver, text, date);
+      console.log('private message geldi: ', newMessage);
 
       this.setState(prevState => ({
         privateMessages: [...prevState.privateMessages, newMessage]
@@ -90,8 +91,7 @@ class Login extends Component {
     const { socket, user, connectedUsers, privateMessages, communityMessages } = this.state;
     return (
       <div>
-        <ChatContainer/>
-        {/*{!user ? (
+        {!user ? (
           <LoginForm socket={socket} setUser={this.setUser} />
         ) : (
           <ChatContainer
@@ -99,9 +99,10 @@ class Login extends Component {
             connectedUsers={connectedUsers}
             messages={privateMessages}
             communityMessages={communityMessages}
+            logout={this.logout}
             socket={socket}
           />
-        )}*/}
+        )}
         {/*<Button variant="raised" color="secondary" onClick={this.logout}>
           Logout
         </Button>

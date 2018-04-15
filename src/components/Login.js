@@ -87,6 +87,12 @@ class Login extends Component {
     this.setState({ user: null });
   };
 
+  handlePrivateMessageState = (message) => {
+    this.setState(prevState => ({
+      privateMessages: [...prevState.privateMessages, message]
+    }));
+  };
+
   render() {
     const { socket, user, connectedUsers, privateMessages, communityMessages } = this.state;
     return (
@@ -101,6 +107,7 @@ class Login extends Component {
             communityMessages={communityMessages}
             logout={this.logout}
             socket={socket}
+            handlePrivateMessageState={this.handlePrivateMessageState}
           />
         )}
         {/*<Button variant="raised" color="secondary" onClick={this.logout}>

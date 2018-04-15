@@ -9,6 +9,7 @@ import { withStyles } from "material-ui/styles";
 
 import { PRIVATE_CHAT, COMMUNITY_CHAT } from '../Events';
 import User from './User';
+import Message from '../Models/Message';
 
 const styles = theme => ({
   wrapper: {
@@ -69,6 +70,7 @@ const styles = theme => ({
   },
   chatMessageWrapper: {
     display: "flex",
+    flexDirection: "column",
     margin: 5
   },
   chatMessageText: {
@@ -102,7 +104,48 @@ const styles = theme => ({
     cursor: "pointer",
     fontFamily: "inherit",
   },
-  
+  container: {
+    border: "2px solid #dedede",
+    backgroundColor: "#f1f1f1",
+    borderRadius: "5px",
+    padding: 10,
+    margin: "10px 0"
+  },
+  containerDarker: {
+    border: "2px solid #dedede",
+    borderRadius: "5px",
+    padding: 10,
+    margin: "10px 0",
+    borderColor: "#ccc",
+    backgroundColor: "#ddd"
+  },
+  containerAfter: {
+    content: "",
+    clear: "both",
+    display: "table"
+  },
+  imgAvatarLeft: {
+    float: "left",
+    maxWidth: 60,
+    width: "100%",
+    marginRight: 20,
+    borderRadius: "50%",
+  },
+  imgAvatarRight: {
+    float: "right",
+    maxWidth: 60,
+    width: "100%",
+    marginRight: 20,
+    borderRadius: "50%",
+  },
+  timeRight: {
+    float: "right",
+    color: "#aaa"
+  },
+  timeLeft: {
+    float: "left",
+    color: "#999"
+  }
 });
 
 class ChatContainer extends Component {
@@ -118,7 +161,7 @@ class ChatContainer extends Component {
   sendMessage = () => {
     console.log('sending message please wait :)');
 
-    const { socket, connectedUsers, user: sender } = this.props;
+    const { socket, connectedUsers, user: sender, handlePrivateMessageState } = this.props;
     const { message: text, receiver } = this.state;
     const date = Math.round(+new Date() / 1000);
     let socketId = null;
@@ -138,6 +181,13 @@ class ChatContainer extends Component {
 
     // sending to individual socketid (private message)
     socket.emit(PRIVATE_CHAT, socketId, sender, receiver, text, date);
+
+    /**
+     * handlePrivateMessageState fonksiyonu emit edilen (yayınlanan) privateMessage'ı
+     * parent component olan Login componentinin state'ine eklemektedir
+     * */
+    const newMessage = new Message(sender, receiver, text, date);
+    handlePrivateMessageState(newMessage);
   };
 
   onReceiverChange = receiver => {
@@ -164,7 +214,8 @@ class ChatContainer extends Component {
   render() {
     const { user, messages, classes, connectedUsers, logout } = this.props;
     const { receiver } = this.state;
-    let tempMessages = [];
+    let tempMessages = ["0"];
+    let conversation = [];
 
     return (
       <Grid container className={classes.wrapper} spacing={16}>
@@ -206,28 +257,7 @@ class ChatContainer extends Component {
               )
             })
           }*/}
-          {/*<p className={classes.chatMessageWrapper}>
-            <h4 className={classes.chatMessageText}>
-              Message: mesaj1
-            </h4>
-            <h5 className={classes.chatMessageDate}>
-              Date: date1
-            </h5>
-          </p>
-          <p className={classes.chatMessageWrapper}>
-            <h4 className={classes.chatMessageText}>
-              Message: mesaj2
-            </h4>
-            <h5 className={classes.chatMessageDate}>
-              Date: date2
-            </h5>
-          </p>*/}
-
-          {/*receiver ve privateMessages içindeki name eşleşiyorsa
-            message render edilecek
-          */}
-
-          {
+          {/*{
             messages.forEach((message) => {
               if( message.sender.name === receiver.name ){
                 console.log('eşleşme var');
@@ -240,18 +270,32 @@ class ChatContainer extends Component {
                 console.log(receiver.name);
               }
             })
+          }*/}
+
+          {
+            messages.forEach((message) => {
+              if((message.sender.name === user.name && message.receiver.name === receiver.name)
+                || (message.sender.name === receiver.name && message.receiver.name === user.name)) {
+                conversation.push(message);
+              }
+            })
           }
 
           {
-            tempMessages.map((message, index) => {
+            conversation.map((message, index) => {
               return(
                 <div className={classes.chatMessageWrapper} key={index}>
-                  <p className={classes.chatMessageText}>
-                    Message: {message.text}
-                  </p>
-                  <p className={classes.chatMessageDate}>
-                    Date: {message.date}
-                  </p>
+                  <div className={classes.container}>
+                    <img className={classes.imgAvatarLeft} src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar"  />
+                    <p>{message.text}</p>
+                    <span className={classes.timeRight}>{message.date}</span>
+                  </div>
+
+                  {/*<div className={classes.containerDarker}>
+                    <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" className={classes.imgAvatarRight} />
+                    <p>Hey! I'm fine. Thanks for asking!</p>
+                    <span className={classes.timeLeft}>11:01</span>
+                  </div>*/}
                 </div>
               )
             })

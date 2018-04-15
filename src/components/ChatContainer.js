@@ -281,7 +281,7 @@ class ChatContainer extends Component {
             })
           }
 
-          {
+          {/*{
             conversation.map((message, index) => {
               return(
                 <div className={classes.chatMessageWrapper} key={index}>
@@ -291,11 +291,38 @@ class ChatContainer extends Component {
                     <span className={classes.timeRight}>{message.date}</span>
                   </div>
 
-                  {/*<div className={classes.containerDarker}>
+                  <div className={classes.containerDarker}>
                     <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" className={classes.imgAvatarRight} />
                     <p>Hey! I'm fine. Thanks for asking!</p>
                     <span className={classes.timeLeft}>11:01</span>
-                  </div>*/}
+                  </div>
+                </div>
+              )
+            })
+          }*/}
+
+          {
+            conversation.map((message, index) => {
+              let theme = (message.sender.name  === user.name) ? 'light' : 'dark';
+
+              return(
+                <div>
+                  { theme === 'light' ?
+                    <div className={classes.chatMessageWrapper} key={index}>
+                      <div className={classes.container}>
+                        <img className={classes.imgAvatarLeft} src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar"  />
+                        <p>{message.text}</p>
+                        <span className={classes.timeRight}>{message.date}</span>
+                      </div>
+                    </div> :
+                      <div className={classes.chatMessageWrapper} key={index}>
+                        <div className={classes.containerDarker}>
+                          <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" className={classes.imgAvatarRight} />
+                          <p>{message.text}</p>
+                          <span className={classes.timeLeft}>{message.date}</span>
+                        </div>
+                      </div>
+                  }
                 </div>
               )
             })

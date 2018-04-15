@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 
-import Button from 'material-ui/Button';
-import List, { ListItem, ListItemText } from 'material-ui/List';
-
 import io from 'socket.io-client';
 
 import { USER_CONNECTED, LOGOUT, USERS_CHANGED, COMMUNITY_CHAT } from '../Events';
@@ -12,7 +9,8 @@ import LoginForm from './LoginForm';
 
 import ChatContainer from './ChatContainer';
 
-const socketUrl = 'http://127.0.0.1:2112';
+// const socketUrl = 'https://adreno-server.herokuapp.com';
+const socketUrl = 'http://localhost:2112';
 
 class Login extends Component {
   constructor(props) {
@@ -20,15 +18,11 @@ class Login extends Component {
 
     this.state = {
       socket: null,
-      user: null, // TODO: user nesnesi css amaçlı atanmıştır, tekrardan null yapılması gerekli
+      user: null, // user nesnesi null haricinde ayarlanırsa login ekranı pas geçilir
       connectedUsers: [],
       privateMessages: [],
       communityMessages: []
     };
-  }
-
-  componentWillMount() {
-    this.initSocket();
   }
 
   initSocket = () => {
@@ -48,13 +42,10 @@ class Login extends Component {
 
     socket.on('privateMessage', (sender, receiver, text, date) => {
       const newMessage = new Message(sender, receiver, text, date);
-      console.log('private message geldi: ', newMessage);
 
       this.setState(prevState => ({
         privateMessages: [...prevState.privateMessages, newMessage]
       }));
-      // Alternative approach
-      // this.setState({privateMessages:[...this.state.privateMessages, newMessage]});
     });
 
     socket.on(COMMUNITY_CHAT, (sender, text, date) => {
@@ -65,6 +56,11 @@ class Login extends Component {
       }));
     });
   };
+
+  // TODO: console'da çıkan component hatası bu kısımla ilgili olabilir, initSocket metodunu constructor'a taşımak sorunu çözebilir.
+  componentWillMount() {
+    this.initSocket();
+  }
 
   handleUsersChange = connectedUsers => {
     this.setState({
@@ -110,27 +106,6 @@ class Login extends Component {
             handlePrivateMessageState={this.handlePrivateMessageState}
           />
         )}
-        {/*<Button variant="raised" color="secondary" onClick={this.logout}>
-          Logout
-        </Button>
-
-        {user ? (
-          <div>
-            <h3>Connected Users</h3>
-            <List>
-              {connectedUsers.map((user, index) => {
-                return (
-                  <ListItem key={index}>
-                    <ListItemText primary={user.name} secondary={user.id} />
-                    <ListItemText primary={user.ipAddress} />
-                  </ListItem>
-                );
-              })}
-            </List>
-          </div>
-        ) : (
-          <h4>You must login to see connected users :)</h4>
-        )}*/}
       </div>
     );
   }

@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 
 import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
-import Paper from 'material-ui/Paper';
-import Typography from 'material-ui/Typography';
 import Grid from "material-ui/Grid";
 import { withStyles } from "material-ui/styles";
+
+import moment from 'moment';
 
 import { PRIVATE_CHAT, COMMUNITY_CHAT } from '../Events';
 import User from './User';
@@ -73,12 +72,6 @@ const styles = theme => ({
     flexDirection: "column",
     margin: 5
   },
-  chatMessageText: {
-
-  },
-  chatMessageDate: {
-
-  },
   send: {
     display: "flex",
     justifyContent: "flex-end",
@@ -91,8 +84,7 @@ const styles = theme => ({
   },
   messageText : {
     display: "flex",
-    marginLeft: 15,
-    marginRight: 10
+    margin: "15px 5px 15px 5px"
   },
   sendButton: {
     border: 0,
@@ -154,24 +146,19 @@ class ChatContainer extends Component {
 
     this.state = {
       receiver: '',
-      message: ''
+      message: '',
+      selectedUser: null
     };
+
+    moment.locale('tr');
+    moment().format('LT');
   }
 
   sendMessage = () => {
-    console.log('sending message please wait :)');
-
     const { socket, connectedUsers, user: sender, handlePrivateMessageState } = this.props;
     const { message: text, receiver } = this.state;
     const date = Math.round(+new Date() / 1000);
     let socketId = null;
-
-    // TODO: state içindeki username değişkeni kullanılarak connectedUsers içinde socket id bulunacak
-    // for(let user in connectedUsers) {
-    //   if(user.name === receiver) {
-    //     socketId = user.socketId;
-    //   }
-    // }
 
     for (let i = 0; i < connectedUsers.length; i++) {
       if (connectedUsers[i].name === receiver.name) {
@@ -192,7 +179,8 @@ class ChatContainer extends Component {
 
   onReceiverChange = receiver => {
     this.setState({
-      receiver: receiver
+      receiver: receiver,
+      selectedUser: receiver // şecilmiş sohbeti renklendirmek için gerekli işlem
     });
   };
 
@@ -211,11 +199,26 @@ class ChatContainer extends Component {
     socket.emit(COMMUNITY_CHAT, sender, text, date);
   };
 
+  handleEnterPress = event => {
+    if(event.key === 'Enter') {
+      this.sendMessage();
+      this.setState({
+        message: ''
+      })
+    }
+  };
+
   render() {
     const { user, messages, classes, connectedUsers, logout } = this.props;
-    const { receiver } = this.state;
-    let tempMessages = ["0"];
+    const { receiver, message, selectedUser } = this.state;
     let conversation = [];
+
+    messages.forEach((message) => {
+      if((message.sender.name === user.name && message.receiver.name === receiver.name)
+        || (message.sender.name === receiver.name && message.receiver.name === user.name)) {
+        conversation.push(message);
+      }
+    });
 
     return (
       <Grid container className={classes.wrapper} spacing={16}>
@@ -236,100 +239,51 @@ class ChatContainer extends Component {
           </span>
         </Grid>
         <Grid item className={classes.friends}>
-          {connectedUsers.map((user, index) => {
-            return (
-              <User user={user} onReceiverChange={this.onReceiverChange} key={index}/>
-            )
+          {connectedUsers.map((connectedUser, index) => {
+            if(connectedUser.name !== user.name) {
+              return (
+                selectedUser ?
+                <User user={connectedUser} selected={selectedUser.name === connectedUser.name}
+                      onReceiverChange={this.onReceiverChange} key={index}/>
+                  :
+                <User user={connectedUser} selected={false} onReceiverChange={this.onReceiverChange} key={index}/>
+              )
+            }
           })}
         </Grid>
         <Grid item className={classes.chat}>
-          {/*{
-            messages.map((message, index) => {
-              return(
-                <div className={classes.chatMessageWrapper} key={index}>
-                  <p className={classes.chatMessageText}>
-                    Message: {message.text}
-                  </p>
-                  <p className={classes.chatMessageDate}>
-                    Date: {message.date}
-                  </p>
-                </div>
-              )
-            })
-          }*/}
-          {/*{
-            messages.forEach((message) => {
-              if( message.sender.name === receiver.name ){
-                console.log('eşleşme var');
-                tempMessages.push(message);
-              }
-              else {
-                // TODO: debug amaçlı yazıldı silinecek
-                console.log('eşleşme yok');
-                console.log(message.sender.name);
-                console.log(receiver.name);
-              }
-            })
-          }*/}
+          {conversation.map((message, index) => {
+            let theme = (message.sender.name  === user.name) ? 'light' : 'dark';
 
-          {
-            messages.forEach((message) => {
-              if((message.sender.name === user.name && message.receiver.name === receiver.name)
-                || (message.sender.name === receiver.name && message.receiver.name === user.name)) {
-                conversation.push(message);
-              }
-            })
-          }
+            const timestamp = moment.unix(message.date);
 
-          {/*{
-            conversation.map((message, index) => {
-              return(
-                <div className={classes.chatMessageWrapper} key={index}>
-                  <div className={classes.container}>
-                    <img className={classes.imgAvatarLeft} src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar"  />
-                    <p>{message.text}</p>
-                    <span className={classes.timeRight}>{message.date}</span>
+            return(
+              <div key={index}>
+                { theme === 'light' ?
+                  <div className={classes.chatMessageWrapper}>
+                    <div className={classes.container}>
+                      <p className={classes.messageText}>{message.text}</p>
+                      <span className={classes.timeRight}>
+                        {timestamp.format("HH:mm")}
+                      </span>
+                    </div>
+                  </div> :
+                  <div className={classes.chatMessageWrapper}>
+                    <div className={classes.containerDarker}>
+                      <p className={classes.messageText}>{message.text}</p>
+                      <span className={classes.timeLeft}>
+                        {timestamp.format("HH:mm")}
+                      </span>
+                    </div>
                   </div>
-
-                  <div className={classes.containerDarker}>
-                    <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" className={classes.imgAvatarRight} />
-                    <p>Hey! I'm fine. Thanks for asking!</p>
-                    <span className={classes.timeLeft}>11:01</span>
-                  </div>
-                </div>
-              )
-            })
-          }*/}
-
-          {
-            conversation.map((message, index) => {
-              let theme = (message.sender.name  === user.name) ? 'light' : 'dark';
-
-              return(
-                <div>
-                  { theme === 'light' ?
-                    <div className={classes.chatMessageWrapper} key={index}>
-                      <div className={classes.container}>
-                        <img className={classes.imgAvatarLeft} src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar"  />
-                        <p>{message.text}</p>
-                        <span className={classes.timeRight}>{message.date}</span>
-                      </div>
-                    </div> :
-                      <div className={classes.chatMessageWrapper} key={index}>
-                        <div className={classes.containerDarker}>
-                          <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" className={classes.imgAvatarRight} />
-                          <p>{message.text}</p>
-                          <span className={classes.timeLeft}>{message.date}</span>
-                        </div>
-                      </div>
-                  }
-                </div>
-              )
+                }
+              </div>
+            )
             })
           }
         </Grid>
         <Grid item className={classes.send}>
-          <TextField className={classes.messageText} placeholder="Type a message" fullWidth onChange={this.onMessageChange}/>
+          <TextField className={classes.messageText} onKeyPress={this.handleEnterPress} placeholder="Type a message" onChange={this.onMessageChange} value={message} fullWidth/>
           <button className={classes.sendButton} onClick={this.sendMessage}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
               <path fill="#263238" fillOpacity=".45" d="M1.101 21.757L23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z" />

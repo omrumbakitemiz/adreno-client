@@ -70,6 +70,7 @@ const styles = theme => ({
     display: "flex",
     justifyContent: "center",
     color: "red",
+    font: "Roboto",
     fontSize: 24
   }
 });
@@ -87,10 +88,10 @@ class LoginForm extends Component {
   }
 
   setUser = ({ user, isUser }) => {
-    console.log(user, isUser);
     if (isUser) {
-      this.setError('User name taken');
-    } else {
+      this.setError('User name taken :(');
+    }
+    else {
       this.props.setUser(user);
       this.setError('');
     }
@@ -101,20 +102,11 @@ class LoginForm extends Component {
   };
 
   handleSubmit = e => {
-    console.log('handle submit');
     e.preventDefault();
 
     const { socket } = this.props;
     const { nickname } = this.state;
     let ipAddress = null;
-
-    // fetch('https://api.ipify.org?format=json')
-    //   .then(response => response.json())
-    //   .then(ip => {
-    //     if (ip != null) {
-    //       ipAddress = ip;
-    //     }
-    //   })
 
     const getIp = async () => {
       const response = await fetch('https://api.ipify.org?format=json');
@@ -161,6 +153,7 @@ class LoginForm extends Component {
             <Grid className={classes.dropzoneContainer} item xs={12}>
               <Dropzone className={classes.dropzone} accept="image/png, image/jpg, image/jpeg" onDrop={this.onDrop}>
                 <span className={classes.dropzoneText}>Profil Resminizi Buraya Sürükleyin</span>
+                {/* TODO: state içindeki files içindeki resim burada gösterilecek*/}
                 {/*<img className={classes.picture} src="https://s3.amazonaws.com/s3.imagefinder.co/uploads/2016/04/08080020/unsplash-com-photo-1459706047544-bac915bf34b6-300x199.jpg" />*/}
               </Dropzone>
             </Grid>

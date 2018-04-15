@@ -23,7 +23,13 @@ const styles = theme => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    color: "black",
+    color: "black"
+  },
+  usernameSelected: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "mediumseagreen",
   }
 });
 
@@ -41,13 +47,13 @@ class User extends Component {
   };
 
   render() {
-    const { classes, user } = this.props;
+    const { classes, user, selected } = this.props;
 
     return(
       <Grid container className={classes.wrapper} spacing={16}>
         <Grid onClick={this.handleReceiverChange} item className={classes.picture}>
           <img className={classes.avatar} src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" />
-          <span className={classes.username}>
+          <span className={selected ? classes.usernameSelected : classes.username}>
             {user.name}
           </span>
         </Grid>

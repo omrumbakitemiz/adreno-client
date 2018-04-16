@@ -25,6 +25,15 @@ class Login extends Component {
     };
   }
 
+  // Logout butonuna basılmadan tarayıcı kapatılırsa otomatik logout işlemi yapılır.
+  handleBrowserClose = () => {
+    window.addEventListener('beforeunload', event => {
+      event.preventDefault();
+
+      this.logout();
+    });
+  };
+
   initSocket = () => {
     const socket = io(socketUrl);
 
@@ -62,6 +71,12 @@ class Login extends Component {
     this.initSocket();
   }
 
+  componentDidMount(){
+    this.handleSessionStorage();
+
+    this.handleBrowserClose();
+  }
+
   handleUsersChange = connectedUsers => {
     this.setState({
       connectedUsers: connectedUsers
@@ -74,6 +89,7 @@ class Login extends Component {
     socket.emit(USER_CONNECTED, user);
 
     this.setState({ user });
+    sessionStorage.setItem('user', JSON.stringify(user));
   };
 
   logout = () => {
@@ -81,6 +97,7 @@ class Login extends Component {
     socket.emit(LOGOUT, user.name);
 
     this.setState({ user: null });
+    sessionStorage.clear();
   };
 
   handlePrivateMessageState = (message) => {
@@ -89,8 +106,17 @@ class Login extends Component {
     }));
   };
 
+  handleSessionStorage = () => {
+    const user = JSON.parse(sessionStorage.getItem('user'));
+
+    if(user) {
+      this.setState({ user });
+    }
+  };
+
   render() {
     const { socket, user, connectedUsers, privateMessages, communityMessages } = this.state;
+
     return (
       <div>
         {!user ? (

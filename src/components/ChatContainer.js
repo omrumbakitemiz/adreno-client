@@ -249,6 +249,9 @@ class ChatContainer extends Component {
                 <User user={connectedUser} selected={false} onReceiverChange={this.onReceiverChange} key={index}/>
               )
             }
+            else {
+              return null
+            }
           })}
         </Grid>
         <Grid item className={classes.chat}>
@@ -262,7 +265,12 @@ class ChatContainer extends Component {
                 { theme === 'light' ?
                   <div className={classes.chatMessageWrapper}>
                     <div className={classes.container}>
-                      <p className={classes.messageText}>{message.text}</p>
+                      <p>
+                        {message.sender.name}
+                      </p>
+                      <p className={classes.messageText}>
+                        {message.text}
+                      </p>
                       <span className={classes.timeRight}>
                         {timestamp.format("HH:mm")}
                       </span>
@@ -270,7 +278,12 @@ class ChatContainer extends Component {
                   </div> :
                   <div className={classes.chatMessageWrapper}>
                     <div className={classes.containerDarker}>
-                      <p className={classes.messageText}>{message.text}</p>
+                      <p>
+                        {message.sender.name}
+                      </p>
+                      <p className={classes.messageText}>
+                        {message.text}
+                      </p>
                       <span className={classes.timeLeft}>
                         {timestamp.format("HH:mm")}
                       </span>

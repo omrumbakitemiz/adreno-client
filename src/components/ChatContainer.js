@@ -22,12 +22,23 @@ const styles = theme => ({
   },
   userInfo: {
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
+    padding: "2px 2px 8px 8px",
     background: "radial-gradient(circle, rgba(211,211,211,1) 0%, rgba(0,0,0,1) 500%)",
     gridColumn: "1 / 4",
     gridRow: "1 / 2",
     maxHeight: 100
+  },
+  userInfoUsername: {
+    fontSize: "1.2em",
+    textTransform: "capitalize",
+    margin: "8px 5px 5px 15px"
+  },
+  userInfoIpAddress: {
+    fontSize: "0.9em",
+    textTransform: "capitalize",
+    margin: "8px 5px 5px 15px"
   },
   chatInfoWrapper: {
     display: "flex",
@@ -41,12 +52,23 @@ const styles = theme => ({
     display: "flex",
     flexGrow: "50",
   },
+  chatInfoUsername: {
+    fontFamily: 'Roboto',
+    textTransform: "capitalize",
+    fontSize: "1.4em",
+    margin: "8px 5px 5px 20px"
+  },
+  chatInfoEmail: {
+    fontFamily: 'Roboto',
+    fontSize: "0.9em",
+    margin: "10px 5px 5px 20px"
+  },
   logout: {
     display: "flex",
-    marginTop: 32,
-    marginRight: 20,
+    marginTop: 20,
+    marginRight: 15,
     width: 32,
-    height: 30,
+    height: 32,
     opacity: "0.6"
   },
   friends: {
@@ -67,6 +89,21 @@ const styles = theme => ({
     gridColumn: "4 / -1",
     gridRow: "2 / -2"
   },
+  selectChatWrapper: {
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "column",
+    alignItems: "center",
+    background: "radial-gradient(circle, rgba(211,211,211,1) 0%, rgba(0,0,0,1) 500%)",
+    gridColumn: "4 / -1",
+    gridRow: "2 / -2"
+  },
+  selectChatMessage: {
+    fontFamily :'Roboto',
+    fontSize: '1.3em',
+    fontStyle: 'italic',
+    textShadow: '4px 4px 4px #aaa'
+  },
   chatMessageWrapper: {
     display: "flex",
     flexDirection: "column",
@@ -80,7 +117,8 @@ const styles = theme => ({
     gridColumn: "4 / -1",
     gridRow: "-2 / -1",
     maxHeight: 100,
-    paddingRight: 3
+    paddingRight: 3,
+    paddingLeft: 10
   },
   messageText : {
     display: "flex",
@@ -178,9 +216,14 @@ class ChatContainer extends Component {
   };
 
   onReceiverChange = receiver => {
+    /*this.setState({
+      receiver: receiver,
+      selectedUser: receiver, // şecilmiş sohbeti renklendirmek için gerekli işlem
+    });*/
+
     this.setState({
       receiver: receiver,
-      selectedUser: receiver // şecilmiş sohbeti renklendirmek için gerekli işlem
+      selectedUser: receiver
     });
   };
 
@@ -221,19 +264,27 @@ class ChatContainer extends Component {
     });
 
     return (
-      <Grid container className={classes.wrapper} spacing={16}>
+      <Grid container className={classes.wrapper} spacing={0}>
         <Grid item className={classes.userInfo}>
           <div>
-            <p>{user.name}</p>
-            <p>IP: {user.ipAddress}</p>
+            <p className={classes.userInfoUsername}>{user.name}</p>
+            <p className={classes.userInfoIpAddress}>IP: {user.ipAddress}</p>
           </div>
         </Grid>
         <Grid item className={classes.chatInfoWrapper}>
           <div className={classes.chatInfo}>
-            user
+            <div>
+              {selectedUser ?
+                <div>
+                  <p className={classes.chatInfoUsername}>{receiver.name}</p>
+                  <p className={classes.chatInfoEmail}>Last seen: </p>
+                </div> :
+                null
+              }
+            </div>
           </div>
           <span className={classes.logout} onClick={logout}>
-            <svg style={{width: 32}}>
+            <svg >
               <path d="M24 20v-4h-10v-4h10v-4l6 6zM22 18v8h-10v6l-12-6v-26h22v10h-2v-8h-16l8 4v18h8v-6z" />
             </svg>
           </span>
@@ -254,47 +305,56 @@ class ChatContainer extends Component {
             }
           })}
         </Grid>
-        <Grid item className={classes.chat}>
-          {conversation.map((message, index) => {
-            let theme = (message.sender.name  === user.name) ? 'light' : 'dark';
+        {
+          selectedUser ?
+          <Grid item className={classes.chat}>
+            {
+              conversation.map((message, index) => {
+                let theme = (message.sender.name  === user.name) ? 'light' : 'dark';
 
-            const timestamp = moment.unix(message.date);
+                const timestamp = moment.unix(message.date);
 
-            return(
-              <div key={index}>
-                { theme === 'light' ?
-                  <div className={classes.chatMessageWrapper}>
-                    <div className={classes.container}>
-                      <p>
-                        {message.sender.name}
-                      </p>
-                      <p className={classes.messageText}>
-                        {message.text}
-                      </p>
-                      <span className={classes.timeRight}>
-                        {timestamp.format("HH:mm")}
-                      </span>
-                    </div>
-                  </div> :
-                  <div className={classes.chatMessageWrapper}>
-                    <div className={classes.containerDarker}>
-                      <p>
-                        {message.sender.name}
-                      </p>
-                      <p className={classes.messageText}>
-                        {message.text}
-                      </p>
-                      <span className={classes.timeLeft}>
-                        {timestamp.format("HH:mm")}
-                      </span>
-                    </div>
+                return(
+                  <div key={index}>
+                    { theme === 'light' ?
+                      <div className={classes.chatMessageWrapper}>
+                        <div className={classes.container}>
+                          <p>
+                            {message.sender.name}
+                          </p>
+                          <p className={classes.messageText}>
+                            {message.text}
+                          </p>
+                          <span className={classes.timeRight}>
+                    {timestamp.format("HH:mm")}
+                  </span>
+                        </div>
+                      </div> :
+                      <div className={classes.chatMessageWrapper}>
+                        <div className={classes.containerDarker}>
+                          <p>
+                            {message.sender.name}
+                          </p>
+                          <p className={classes.messageText}>
+                            {message.text}
+                          </p>
+                          <span className={classes.timeLeft}>
+                    {timestamp.format("HH:mm")}
+                  </span>
+                        </div>
+                      </div>
+                    }
                   </div>
-                }
-              </div>
-            )
-            })
-          }
-        </Grid>
+                )
+              })
+            }
+          </Grid> :
+          <Grid item className={classes.selectChatWrapper}>
+            <p className={classes.selectChatMessage}>
+              Please select chat from left section
+            </p>
+          </Grid>
+        }
         <Grid item className={classes.send}>
           <TextField className={classes.messageText} onKeyPress={this.handleEnterPress} placeholder="Type a message" onChange={this.onMessageChange} value={message} fullWidth/>
           <button className={classes.sendButton} onClick={this.sendMessage}>

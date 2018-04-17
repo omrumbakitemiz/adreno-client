@@ -101,22 +101,44 @@ class LoginForm extends Component {
     this.setState({ error });
   };
 
-  handleSubmit = e => {
+  handleSubmit = async (e) => {
     e.preventDefault();
 
     const { socket } = this.props;
     const { nickname } = this.state;
     let ipAddress = null;
-
+/*
     const getIp = async () => {
+      try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const ip = await response.json();
+        ipAddress = ip.ip; // api'den dönen cevap response = { ip: 1234421 } şeklinde olduğu için ip.ip işlemi uygulandı.
+
+        socket.emit(VERIFY_USER, nickname, ipAddress, this.setUser);
+      }
+      catch (e) {
+        console.log('hata: ', e);
+        ipAddress = '0.0.0.0';
+        socket.emit(VERIFY_USER, nickname, ipAddress, this.setUser);
+      }
+      console.log('ip:', ipAddress);
+    };
+
+    getIp();*/
+
+    try {
       const response = await fetch('https://api.ipify.org?format=json');
       const ip = await response.json();
       ipAddress = ip.ip; // api'den dönen cevap response = { ip: 1234421 } şeklinde olduğu için ip.ip işlemi uygulandı.
 
       socket.emit(VERIFY_USER, nickname, ipAddress, this.setUser);
-    };
+    }
+    catch (e) {
+      console.log('hata:', e);
+      ipAddress = '0.0.0.0';
 
-    getIp();
+      socket.emit(VERIFY_USER, nickname, ipAddress, this.setUser);
+    }
   };
 
   // TODO: remove this func

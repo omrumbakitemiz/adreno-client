@@ -8,7 +8,7 @@ const styles = theme => ({
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "center",
-    padding: "20px 15px 20px 15px",
+    padding: "10px 0px 10px 15px",
   },
   picture: {
     display: "flex",
@@ -16,20 +16,31 @@ const styles = theme => ({
   avatar: {
     maxWidth: 50,
     maxHeight: 50,
-    borderRadius: "50%",
+    borderRadius: "25%",
     marginRight: 20
+  },
+  avatarSelected: {
+    maxWidth: 50,
+    maxHeight: 50,
+    borderRadius: "25%",
+    marginRight: 20,
+    boxShadow: "4px 4px 5px #aaa"
   },
   username: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    textTransform: "capitalize",
     color: "black"
   },
   usernameSelected: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    color: "mediumseagreen",
+    color: "red",
+    textShadow: '3px 3px 5px #aaa',
+    textTransform: "capitalize",
+    fontSize: "1.3em",
   }
 });
 
@@ -50,9 +61,9 @@ class User extends Component {
     const { classes, user, selected } = this.props;
 
     return(
-      <Grid container className={classes.wrapper} spacing={16}>
-        <Grid onClick={this.handleReceiverChange} item className={classes.picture}>
-          <img className={classes.avatar} src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" />
+      <Grid container onClick={this.handleReceiverChange} className={classes.wrapper} spacing={16}>
+        <Grid item className={classes.picture}>
+          <img className={selected ? classes.avatarSelected : classes.avatar} src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" />
           <span className={selected ? classes.usernameSelected : classes.username}>
             {user.name}
           </span>

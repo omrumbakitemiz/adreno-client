@@ -68,10 +68,12 @@ class Login extends Component {
 
   // TODO: console'da çıkan component hatası bu kısımla ilgili olabilir, initSocket metodunu constructor'a taşımak sorunu çözebilir.
   componentWillMount() {
-    this.initSocket();
+    // this.initSocket();
   }
 
   componentDidMount(){
+    this.initSocket();
+
     this.handleSessionStorage();
 
     this.handleBrowserClose();

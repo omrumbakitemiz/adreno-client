@@ -356,7 +356,12 @@ class ChatContainer extends Component {
           </Grid>
         }
         <Grid item className={classes.send}>
-          <TextField className={classes.messageText} onKeyPress={this.handleEnterPress} placeholder="Type a message" onChange={this.onMessageChange} value={message} fullWidth/>
+          {selectedUser ?
+            <TextField className={classes.messageText} onKeyPress={this.handleEnterPress}
+               placeholder="Type a message" onChange={this.onMessageChange} value={message} fullWidth/> :
+            <TextField className={classes.messageText}
+               placeholder="Type a message" disabled fullWidth/>
+          }
           <button className={classes.sendButton} onClick={this.sendMessage}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
               <path fill="#263238" fillOpacity=".45" d="M1.101 21.757L23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z" />

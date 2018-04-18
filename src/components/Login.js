@@ -19,6 +19,7 @@ class Login extends Component {
     this.state = {
       socket: null,
       user: null, // user nesnesi null haricinde ayarlanırsa login ekranı pas geçilir
+      image: '',
       connectedUsers: [],
       privateMessages: [],
       communityMessages: []
@@ -66,11 +67,6 @@ class Login extends Component {
     });
   };
 
-  // TODO: console'da çıkan component hatası bu kısımla ilgili olabilir, initSocket metodunu constructor'a taşımak sorunu çözebilir.
-  componentWillMount() {
-    // this.initSocket();
-  }
-
   componentDidMount(){
     this.initSocket();
 
@@ -85,12 +81,12 @@ class Login extends Component {
     });
   };
 
-  setUser = user => {
+  setUser = (user, image) => {
     const { socket } = this.state;
 
     socket.emit(USER_CONNECTED, user);
 
-    this.setState({ user });
+    this.setState({ user, image });
     sessionStorage.setItem('user', JSON.stringify(user));
   };
 
@@ -117,7 +113,7 @@ class Login extends Component {
   };
 
   render() {
-    const { socket, user, connectedUsers, privateMessages, communityMessages } = this.state;
+    const { socket, user, connectedUsers, privateMessages, communityMessages, image } = this.state;
 
     return (
       <div style={{height: "100vh", width: "100vw"}}>
@@ -126,6 +122,7 @@ class Login extends Component {
         ) : (
           <ChatContainer
             user={user}
+            image={image}
             connectedUsers={connectedUsers}
             messages={privateMessages}
             communityMessages={communityMessages}

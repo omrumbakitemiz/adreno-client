@@ -84,16 +84,17 @@ class LoginForm extends Component {
       nickname: '',
       email: '',
       error: '',
-      files: []
+      image: ''
     };
   }
 
   setUser = ({ user, isUser }) => {
+    const { image } = this.state;
     if (isUser) {
       this.setError('User name taken :(');
     }
     else {
-      this.props.setUser(user);
+      this.props.setUser(user, image);
       this.setError('');
     }
   };
@@ -108,24 +109,6 @@ class LoginForm extends Component {
     const { socket } = this.props;
     const { nickname } = this.state;
     let ipAddress = null;
-/*
-    const getIp = async () => {
-      try {
-        const response = await fetch('https://api.ipify.org?format=json');
-        const ip = await response.json();
-        ipAddress = ip.ip; // api'den dönen cevap response = { ip: 1234421 } şeklinde olduğu için ip.ip işlemi uygulandı.
-
-        socket.emit(VERIFY_USER, nickname, ipAddress, this.setUser);
-      }
-      catch (e) {
-        console.log('hata: ', e);
-        ipAddress = '0.0.0.0';
-        socket.emit(VERIFY_USER, nickname, ipAddress, this.setUser);
-      }
-      console.log('ip:', ipAddress);
-    };
-
-    getIp();*/
 
     try {
       const response = await fetch('https://api.ipify.org?format=json');
@@ -142,11 +125,6 @@ class LoginForm extends Component {
     }
   };
 
-  // TODO: remove this func
-  handleChange = event => {
-    this.setState({ nickname: event.target.value });
-  };
-
   onUsernameChange = event => {
     this.setState({
       nickname: event.target.value
@@ -160,13 +138,20 @@ class LoginForm extends Component {
   };
 
   onDrop = files => {
-    this.setState({
-      files
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const fileBase64 = reader.result;
+
+        this.setState({ image: fileBase64 });
+      };
+
+      reader.readAsDataURL(file);
     });
   };
 
   render() {
-    const { error } = this.state;
+    const { error, image } = this.state;
     const { classes } = this.props;
 
     return (
@@ -175,9 +160,10 @@ class LoginForm extends Component {
           <Grid container spacing={24}>
             <Grid className={classes.dropzoneContainer} item xs={12}>
               <Dropzone className={classes.dropzone} accept="image/png, image/jpg, image/jpeg" onDrop={this.onDrop}>
-                <span className={classes.dropzoneText}>Profil Resminizi Buraya Sürükleyin</span>
-                {/* TODO: state içindeki files içindeki resim burada gösterilecek*/}
-                {/*<img className={classes.picture} src="https://s3.amazonaws.com/s3.imagefinder.co/uploads/2016/04/08080020/unsplash-com-photo-1459706047544-bac915bf34b6-300x199.jpg" />*/}
+                {
+                  image ? <img className={classes.picture} src={image} alt="Avatar"/> :
+                  <span className={classes.dropzoneText}>Profil Resminizi Buraya Sürükleyin</span>
+                }
               </Dropzone>
             </Grid>
             <Grid className={classes.inputContainer} container spacing={24}>

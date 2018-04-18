@@ -9,8 +9,8 @@ import LoginForm from './LoginForm';
 
 import ChatContainer from './ChatContainer';
 
-// const socketUrl = 'https://adreno-server.herokuapp.com';
-const socketUrl = 'http://localhost:2112';
+const socketUrlProd = 'https://adreno-server.azurewebsites.net';
+const socketUrlDev = 'http://localhost:2112';
 
 class Login extends Component {
   constructor(props) {
@@ -24,6 +24,8 @@ class Login extends Component {
       privateMessages: [],
       communityMessages: []
     };
+
+    console.log('env:', process.env.NODE_ENV);
   }
 
   // Logout butonuna basılmadan tarayıcı kapatılırsa otomatik logout işlemi yapılır.
@@ -36,7 +38,7 @@ class Login extends Component {
   };
 
   initSocket = () => {
-    const socket = io(socketUrl);
+    const socket = io(process.env.NODE_ENV === "development" ? socketUrlDev : socketUrlProd);
 
     this.setState({ socket });
 

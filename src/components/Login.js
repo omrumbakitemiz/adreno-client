@@ -120,7 +120,7 @@ class Login extends Component {
     const { socket, user, connectedUsers, privateMessages, communityMessages } = this.state;
 
     return (
-      <div>
+      <div style={{height: "100vh", width: "100vw"}}>
         {!user ? (
           <LoginForm socket={socket} setUser={this.setUser} />
         ) : (

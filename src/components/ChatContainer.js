@@ -12,11 +12,11 @@ import Message from '../Models/Message';
 
 const styles = theme => ({
   wrapper: {
-    backgroundColor: "#fff",
-    height: 700,
-    padding: theme.spacing.unit / 2,
+    background: "radial-gradient(circle, rgba(211,211,211,1) 0%, rgba(0,0,0,1) 500%)",
+    height: "100vh",
+    padding: "1px 1px 1px 1px",
     display: 'grid',
-    gridGap: "5px",
+    gridGap: "3px",
     gridTemplateColumns: "repeat(16, 1fr)",
     gridTemplateRows: "repeat(10, 1fr)",
   },
@@ -25,20 +25,29 @@ const styles = theme => ({
     justifyContent: "flex-start",
     alignItems: "center",
     padding: "2px 2px 8px 8px",
-    background: "radial-gradient(circle, rgba(211,211,211,1) 0%, rgba(0,0,0,1) 500%)",
+    // background: "radial-gradient(circle, rgba(211,211,211,1) 0%, rgba(0,0,0,1) 500%)",
+    background: "#C8C8C8",
     gridColumn: "1 / 4",
     gridRow: "1 / 2",
-    maxHeight: 100
+    maxHeight: 100,
+    boxShadow: "1px 0 4px 0 rgba(0,0,0,0.80)",
+    borderRadius: "0px 10px 10px 0px"
   },
   userInfoUsername: {
+    fontFamily :'Roboto',
+    fontStyle: 'italic',
     fontSize: "1.2em",
     textTransform: "capitalize",
+    textShadow: '4px 4px 5px #aaa',
     margin: "8px 5px 5px 15px"
   },
   userInfoIpAddress: {
+    fontFamily :'Roboto',
+    fontStyle: 'italic',
     fontSize: "0.9em",
     textTransform: "capitalize",
-    margin: "8px 5px 5px 15px"
+    textShadow: '4px 4px 5px #aaa',
+    margin: "8px 5px 5px 15px",
   },
   chatInfoWrapper: {
     display: "flex",
@@ -46,7 +55,10 @@ const styles = theme => ({
     backgroundColor: '#E8E8E8',
     gridColumn: "4 / -1",
     gridRow: "1 / 2",
-    maxHeight: 100
+    maxHeight: 100,
+    borderRadius: "10px 0px 0px 10px",
+    boxShadow: "1px 0 4px 0 rgba(0,0,0,0.80)",
+    marginLeft: 2
   },
   chatInfo: {
     display: "flex",
@@ -78,14 +90,15 @@ const styles = theme => ({
     alignItems: "center",
     backgroundColor: '#E8E8E8',
     gridColumn: "1 / 4",
-    gridRow: "2 / -1"
+    gridRow: "2 / -1",
+    boxShadow: "1px 0 4px 0 rgba(0,0,0,0.80)",
+    borderRadius: "0px 10px 10px 0px"
   },
   chat: {
     display: "flex",
     justifyContent: "flex-start",
     flexDirection: "column",
     alignItems: "flex-start",
-    background: "radial-gradient(circle, rgba(211,211,211,1) 0%, rgba(0,0,0,1) 500%)",
     gridColumn: "4 / -1",
     gridRow: "2 / -2"
   },
@@ -94,7 +107,6 @@ const styles = theme => ({
     justifyContent: "center",
     flexDirection: "column",
     alignItems: "center",
-    background: "radial-gradient(circle, rgba(211,211,211,1) 0%, rgba(0,0,0,1) 500%)",
     gridColumn: "4 / -1",
     gridRow: "2 / -2"
   },
@@ -118,7 +130,10 @@ const styles = theme => ({
     gridRow: "-2 / -1",
     maxHeight: 100,
     paddingRight: 3,
-    paddingLeft: 10
+    paddingLeft: 10,
+    boxShadow: "-2px -2px 2px 1px rgba(0, 0, 0, 0.2)",
+    borderRadius: "10px 0px 0px 10px",
+    marginLeft: 2
   },
   messageText : {
     display: "flex",

@@ -13,7 +13,7 @@ import { VERIFY_USER } from '../Events';
 const styles = theme => ({
   wrapper: {
     background: "radial-gradient(circle, rgba(211,211,211,1) 0%, rgba(0,0,0,1) 500%)",
-    minHeight: "100vh"
+    minHeight: "102vh"
   },
   dropzoneContainer: {
     display: "flex",

@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 
-import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
-import Grid from "material-ui/Grid";
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
 
 import Dropzone from 'react-dropzone';
 
-import { withStyles } from "material-ui/styles";
+import { withStyles } from "@material-ui/core/styles";
 
 import { VERIFY_USER } from '../Events';
 
